@@ -5,20 +5,24 @@ class Chat:
     def __init__(self, username):
         super(Chat, self).__init__()
         self.name = username
-        self.chat = requests.get('http://localhost:5000/update').json()
-        self.mess_id = str(len(self.chat.keys())+1)
-        self.chat[self.mess_id] = {'system': f'пользователь {self.name} присоеденился к чату.'}
-        requests.post('http://localhost:5000/send', json=self.chat)
-        os.system('clear')
-        for i in range(1, len(self.chat.keys())+1):
-            for j in self.chat.get(str(i)).keys():
-                print(j + ': ' + self.chat.get(str(i)).get(j))
-        print(f'\nздравствуйте, {username}. вы вошли в чат.\nдля выхода напишите /exit\n')
+        try:
+            self.chat = requests.get('http://localhost:5000/update').json()
+            self.mess_id = str(len(self.chat.keys())+1)
+            self.chat[self.mess_id] = {'system': f'пользователь {self.name} присоеденился к чату.'}
+            requests.post('http://localhost:5000/send', json=self.chat)
+            os.system('clear')
+            for i in range(1, len(self.chat.keys())+1):
+                for j in self.chat.get(str(i)).keys():
+                    print(j + ': ' + self.chat.get(str(i)).get(j))
+            print(f'\nздравствуйте, {username}. вы вошли в чат.\nдля выхода напишите /exit\n')
+        except :
+            print('ошибка подключения(возможно)')
+            sys.exit()
 
     def send(self):
         while True:
             try:
-                messenge = input("введите текст сообщения или enter что бы обновить\n")
+                messenge = input("введите текст сообщения или enter что бы обновить (для выхода напишите /exit)\n")
                 if messenge != '/exit' and messenge != '':
                     os.system('clear')
                     self.chat = requests.get('http://localhost:5000/update').json()
